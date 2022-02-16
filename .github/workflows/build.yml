@@ -6,15 +6,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  
-  build:
-    name: build
+  sonarcloud:
+    name: SonarCloud
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ["3.9"]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -24,14 +22,6 @@ jobs:
       - name: Run tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py
-  sonarcloud:
-    needs: build
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
